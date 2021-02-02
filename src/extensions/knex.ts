@@ -8,6 +8,6 @@ export const knexClient = knex({
   pool: knexConfig.pool
 })
 
-export function checkConnection(): Promise<any> {
+export function checkDbConnection(): Promise<any> {
   return knexClient.raw('SELECT (1 + 1)');
 }
