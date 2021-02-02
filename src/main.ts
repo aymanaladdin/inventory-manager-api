@@ -1,13 +1,16 @@
 import express from 'express';
+import { logger } from './extensions';
 import { loadApp, startApp } from './loader';
 
-try {
+async function main() {
   const app = express();
 
-  loadApp({ app });
+  await loadApp({ app });
+
   startApp({ app });
 }
 
-catch (err) {
+main().catch(err => {
   console.log('Failed to start:', err);
-}
+  process.exit(1);
+});

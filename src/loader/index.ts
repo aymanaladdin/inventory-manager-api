@@ -1,9 +1,8 @@
 import express, { json } from 'express';
 import cors from 'cors';
-import Container from 'typedi';
 import { apiConfig } from '../config';
-import { logger } from '../extensions';
-import { InjectAppDependencies } from './dependecyInjector';
+import { checkConnection, logger } from '../extensions';
+import { registerRoutes } from './register-routes';
 
 export interface IExpressAppOptions {
   app: express.Application
@@ -11,37 +10,33 @@ export interface IExpressAppOptions {
 
 function errorHandler(err, req, res, next) {
   res.status(err.status || 500);
-  res.json({
-    errors: { message: err.message }
-  });
+
+  res.json({ error: { message: err.message } });
 }
 
-export function loadApp({ app }: IExpressAppOptions): void {
-  InjectAppDependencies(); //inject all helper dependencies knexClient, logger
+export async function loadApp({ app }: IExpressAppOptions): Promise<void> {
+  try {
+    await checkConnection();
+    logger.info(`DB connection checked successfully.`);
 
-  // Enable Cross Origin Resource Sharing to all origins by default
-  app.use(cors());
+    app.use(cors());
+    app.use(json());
 
-  // Middleware that transforms the raw string of req.body into json
-  app.use(json());
+    app.use(apiConfig.prefix, registerRoutes());
+    logger.info(`App routes registered successfully.`);
 
-  // Load API routes
-  // app.use(config.api.prefix, routes());
-
-  /// catch 404 and forward to error handler
-  app.use((req, res, next) => {
-    const err = new Error('Not Found');
-    err['status'] = 404;
-
-    next(err);
-  });
-
-  app.use(errorHandler);
+    app.use((req, res, next) => { next({ status: 404, message: 'Not Found !' }); });
+    app.use(errorHandler);
+    logger.info(`App loaded successfully.`);
+  }
+  catch (err) {
+    logger.error(`Failed while loading app`, err);
+    throw err;
+  }
 }
 
 export function startApp({ app }: IExpressAppOptions): void {
   app.listen(apiConfig.port, () => {
-
-    Container.get(logger).info(`server up and running on port ${apiConfig.port}`);
+    logger.info(`server up and running on port ${apiConfig.port}`);
   })
 }

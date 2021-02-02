@@ -7,3 +7,7 @@ export const knexClient = knex({
   connection: mysqlConfig,
   pool: knexConfig.pool
 })
+
+export function checkConnection(): Promise<any> {
+  return knexClient.raw('SELECT (1 + 1)');
+}
