@@ -1,12 +1,10 @@
 import express from 'express';
-import { logger } from './extensions';
 import { loadApp, startApp } from './loader';
 
 async function main() {
   const app = express();
 
   await loadApp({ app });
-
   startApp({ app });
 }
 
