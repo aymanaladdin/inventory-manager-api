@@ -1,18 +1,21 @@
 import express, { Router } from 'express';
-import { healthCheckController } from '../api/health-check/health-check.controller';
-import { productController } from '../api/product/product.controller';
+import { apiConfig } from '../config';
 import { logger } from '../extensions';
+import { dependencyContainer } from './dependecy-injector';
+import { IController } from './interfaces';
 
-export function registerRoutes(): express.Router {
+export function registerAppRoutes(app: express.Application): void {
   const router = Router();
 
-  const product = productController(router);
-  router.use(product.prefix, product.router);
-  logger.info(`${product.prefix} routes registered successfully.`);
+  const controllers: IController[] = dependencyContainer.resolve('controllerList');
 
-  const healthCheck = healthCheckController(router);
-  router.use(healthCheck.prefix, healthCheck.router);
-  logger.info(`${healthCheck.prefix} routes registered successfully.`);
+  controllers.forEach((controller: IController) => {
+    router.use(controller.getPrefix(), controller.getRoutes());
+    logger.info(`${controller.getPrefix()} routes registered successfully.`);
+  })
 
-  return router;
+  app.use(apiConfig.prefix, router);
+  app.use((req, res, next) => { next({ status: 404, message: 'Not Found !' }); });
+
+  logger.info(`App routes registered successfully.`);
 }
