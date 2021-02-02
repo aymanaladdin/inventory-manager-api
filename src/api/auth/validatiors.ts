@@ -8,12 +8,9 @@ const stringPattern = Joi.string()
     { name: 'alpha-num, underscore, dash, column, white-space' }
   );
 
-console.log('called');
 export const authValidator = {
 
   login(req: express.Request, res: express.Response, next: express.NextFunction): void {
-    console.log('called2');
-
     const body = Joi
       .object()
       .keys({

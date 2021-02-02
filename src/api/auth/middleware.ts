@@ -15,8 +15,6 @@ export class IsAuthorizedMiddleWare {
     else {
       try {
         const decodedToken = await this.authService.verifyToken(req.headers.authorization.split(' ')[1]);
-        console.log('decodedToken', decodedToken);
-
         (<any>req).decodedToken = decodedToken;
 
         next();
