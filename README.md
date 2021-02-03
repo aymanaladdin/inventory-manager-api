@@ -20,10 +20,9 @@ Before beign able to start server locally. you should first make the following s
 - finally build and start your server
 
 ### Notice before running `npm migrate:db` 
-make sure that first you have mysql client up and running on your machine with a db created on it `inventory_manager`,
-instead if you have `docker` & `docker-compose` installed on your machine then you could clone this project [inventory-manager-devops](https://github.com/aymanaladdin/inventory-manager-devops) and from the cloned directory on your machine Run `docker-compose up`  
-
-
+- make sure that first you have mysql client up and running on your machine with a db created on it `inventory_manager`,
+- instead if you have `docker` & `docker-compose` installed on your machine then you could clone this project [inventory-manager-devops](https://github.com/aymanaladdin/inventory-manager-devops) 
+- from the cloned directory on your machine Run `docker-compose up`  
 
 ## Accomplised
 
