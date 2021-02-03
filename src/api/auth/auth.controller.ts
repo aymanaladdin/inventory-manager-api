@@ -46,15 +46,17 @@ export class AuthController implements IController {
       }
     });
 
-    this.routes.post('/logout', this.isAuthorizedMiddleWare.verify, async (req: express.Request, res: express.Response) => {
-      const { sub, jti } = (<any>req).decodedToken;
-      const tokens = await this.authService.getUserAuthTokens(sub, { activeAccessToken: jti });
+    this.routes.post('/logout', async (req: express.Request, res: express.Response) => {
+      try {
+        if (req.headers.authorization) {
+          const decodedToken = await this.authService.verifyToken(req.headers.authorization.split(' ')[1]);
+          const { sub, jti } = decodedToken;
+          const tokens = await this.authService.getUserAuthTokens(sub, { activeAccessToken: jti });
 
-      if (!tokens) res.status(403).json('Forbidden, your token not exist or invalid!');
-
-      else {
-        await this.authService.deleteUserAuthTokens(sub, { activeAccessToken: jti });
-
+          if (tokens) await this.authService.deleteUserAuthTokens(sub, { activeAccessToken: jti });
+        }
+      }
+      finally {
         res.status(204).end();
       }
     });

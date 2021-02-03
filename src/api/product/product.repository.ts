@@ -16,7 +16,7 @@ export class ProductRepository {
     if (filter?.description) query.andWhereRaw('`product`.`description` like ?', [`%${filter.description}%`]);
 
     return query
-      .orderBy(sorting || [])
+      .orderBy(sorting || [{ column: 'createdAt', order: 'desc' }])
       .limit(limit || 10)
       .offset(offset || 0);
   }

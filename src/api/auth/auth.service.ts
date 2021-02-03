@@ -39,8 +39,8 @@ export class AuthService {
   }
 
   private async generateAuthTokens(usreKey: string, userName: string) {
-    const accessToken = await this.generateToken({ usreKey, userName, expiry: 60 * 3 });
-    const refreshToken = await this.generateToken({ usreKey, userName, expiry: 60 * 5 });
+    const accessToken = await this.generateToken({ usreKey, userName, expiry: 60 * 60 * 1 });
+    const refreshToken = await this.generateToken({ usreKey, userName, expiry: 60 * 60 * 1.5 });
 
     return { accessToken, refreshToken }
   }
